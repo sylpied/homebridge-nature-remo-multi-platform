@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="style.css?v=1.4.1">
+<div class="asmp-shell">
+  <div class="asmp-heading">
+    <div><h3 id="page-title"></h3><p id="page-description" class="text-muted"></p></div>
+    <select id="ui-language" class="form-select asmp-language" aria-label="Settings language"><option value="auto">Auto</option><option value="ja">日本語</option><option value="en">English</option></select>
+  </div>
+  <div id="status" class="alert alert-info">Loading settings…</div>
+  <div id="settings">
+    <details class="asmp-section" open><summary id="account-title"></summary><div class="asmp-section-body">
+      <div class="form-group"><label id="token-label" for="token"></label><div class="asmp-token-row"><input id="token" class="form-control" type="password" autocomplete="off"><button id="toggle-token" class="btn btn-outline-secondary" type="button"></button></div><small id="token-help" class="asmp-help text-muted"></small></div>
+      <div class="asmp-auth-actions"><button id="discover" class="btn btn-primary" type="button"></button></div>
+    </div></details>
+    <details id="remo-section" class="asmp-section d-none" open><summary id="remo-title"></summary><div class="asmp-section-body"><p id="remo-help" class="text-muted"></p><div id="remos" class="asmp-discovery-list"></div></div></details>
+    <details id="appliance-section" class="asmp-section d-none" open><summary id="appliance-title"></summary><div class="asmp-section-body">
+      <div class="form-group"><label id="mode-label" for="filter-mode"></label><select id="filter-mode" class="form-select"><option id="mode-include" value="include"></option><option id="mode-exclude" value="exclude"></option></select><small id="filter-help" class="asmp-help text-muted"></small></div>
+      <div class="asmp-discovery-toolbar"><input id="device-search" class="form-control" type="search"><span id="selection-count" class="asmp-selection-count text-muted"></span><button id="select-visible" class="btn btn-outline-primary btn-sm" type="button"></button><button id="clear-selection" class="btn btn-outline-secondary btn-sm" type="button"></button></div>
+      <div id="appliances" class="asmp-discovery-list"></div>
+    </div></details>
+    <details class="asmp-section"><summary id="types-title"></summary><div class="asmp-section-body"><div class="asmp-grid"><label class="form-check"><input id="light" class="form-check-input" type="checkbox"><span id="light-label" class="form-check-label"></span></label><label class="form-check"><input id="ac" class="form-check-input" type="checkbox"><span id="ac-label" class="form-check-label"></span></label><label class="form-check"><input id="tv" class="form-check-input" type="checkbox"><span id="tv-label" class="form-check-label"></span></label><label class="form-check"><input id="temperature-type" class="form-check-input sensor-type" data-key="temperature" type="checkbox"><span id="temperature-type-label" class="form-check-label"></span></label><label class="form-check"><input id="humidity-type" class="form-check-input sensor-type" data-key="humidity" type="checkbox"><span id="humidity-type-label" class="form-check-label"></span></label><label class="form-check"><input id="illuminance-type" class="form-check-input sensor-type" data-key="illuminance" type="checkbox"><span id="illuminance-type-label" class="form-check-label"></span></label><label class="form-check"><input id="motion-type" class="form-check-input sensor-type" data-key="motion" type="checkbox"><span id="motion-type-label" class="form-check-label"></span></label></div></div></details>
+    <details class="asmp-section"><summary id="sensor-options-title">Sensor Options</summary><div class="asmp-section-body"><div class="asmp-grid"><div class="form-group"><label id="polling-label" for="sensor-polling"></label><input id="sensor-polling" class="form-control" type="number" min="15" max="300"></div><div class="form-group"><label id="motion-hold-label" for="motion-hold"></label><input id="motion-hold" class="form-control" type="number" min="15" max="600"></div></div></div></details>
+  </div>
+</div>
+<script src="app.js?v=1.4.1"></script>

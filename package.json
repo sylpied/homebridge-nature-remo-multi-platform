@@ -1,0 +1,57 @@
+{
+  "displayName": "Homebridge Nature Remo Multi Platform",
+  "name": "homebridge-nature-remo-multi-platform",
+  "version": "1.4.1",
+  "description": "Independent Homebridge plugin for multiple Nature Remo devices, lights, air conditioners, TVs and sensors.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sylpied/homebridge-nature-remo-multi-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sylpied/homebridge-nature-remo-multi-platform/issues"
+  },
+  "homepage": "https://github.com/sylpied/homebridge-nature-remo-multi-platform#readme",
+  "private": false,
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "homebridge-ui",
+    "config.schema.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "lint": "eslint src/**.ts --max-warnings=0",
+    "watch": "npm run build && npm link && nodemon",
+    "build": "rimraf ./dist && tsc",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge",
+    "smart-home",
+    "nature",
+    "nature-remo"
+  ],
+  "dependencies": {
+    "@homebridge/plugin-ui-utils": "^2.2.5",
+    "async-mutex": "^0.3.2",
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "eslint": "^8.17.0",
+    "homebridge": "^1.4.1",
+    "nodemon": "^2.0.16",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
+  }
+}

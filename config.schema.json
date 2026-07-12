@@ -1,0 +1,115 @@
+{
+  "pluginAlias": "NatureRemoMultiPlatform",
+  "pluginType": "platform",
+  "singular": true,
+  "customUi": true,
+  "customUiPath": "./homebridge-ui",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "required": true,
+        "default": "Nature Remo Platform"
+      },
+      "accessToken": {
+        "title": "Access Token",
+        "type": "string",
+        "format": "password",
+        "required": true
+      },
+      "uiLanguage": {
+        "title": "Settings language",
+        "type": "string",
+        "default": "auto",
+        "oneOf": [
+          { "title": "Automatic", "enum": ["auto"] },
+          { "title": "日本語", "enum": ["ja"] },
+          { "title": "English", "enum": ["en"] }
+        ]
+      },
+      "deviceIds": {
+        "title": "Nature Remo devices",
+        "description": "Optional device IDs to expose. Leave empty to use every Nature Remo on the account.",
+        "type": "array",
+        "items": {
+          "title": "Device ID",
+          "type": "string"
+        }
+      },
+      "deviceFilterConfigured": {
+        "title": "Nature Remo selection configured",
+        "type": "boolean",
+        "default": false
+      },
+      "sensorPollingSeconds": { "title": "Sensor polling interval (seconds)", "type": "integer", "default": 30, "minimum": 15, "maximum": 300 },
+      "motionHoldSeconds": { "title": "Motion detection hold time (seconds)", "type": "integer", "default": 60, "minimum": 15, "maximum": 600 },
+      "sensorSettings": {
+        "title": "Sensors per Nature Remo", "type": "array", "default": [],
+        "items": { "type": "object", "properties": {
+          "deviceId": { "type": "string" },
+          "temperature": { "type": "boolean", "default": true },
+          "humidity": { "type": "boolean", "default": true },
+          "illuminance": { "type": "boolean", "default": true },
+          "motion": { "type": "boolean", "default": true }
+        } }
+      },
+      "applianceFilterMode": {
+        "title": "Appliance selection mode",
+        "type": "string",
+        "default": "all",
+        "oneOf": [
+          { "title": "All appliances", "enum": ["all"] },
+          { "title": "Only selected appliances", "enum": ["include"] },
+          { "title": "All except selected appliances", "enum": ["exclude"] }
+        ]
+      },
+      "applianceIds": {
+        "title": "Selected appliance IDs",
+        "type": "array",
+        "uniqueItems": true,
+        "default": [],
+        "items": { "type": "string" }
+      },
+      "LIGHT": {
+        "title": "Light",
+        "type": "boolean",
+        "default": true
+      },
+      "AC": {
+        "title": "Air Conditioner",
+        "type": "boolean",
+        "default": true
+      },
+      "TV": {
+        "title": "TV",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "layout": [
+    "name",
+    "accessToken",
+    "uiLanguage",
+    "deviceIds",
+    "deviceFilterConfigured",
+    "sensorPollingSeconds",
+    "motionHoldSeconds",
+    "sensorSettings",
+    "applianceFilterMode",
+    "applianceIds",
+    {
+      "type": "fieldset",
+      "title": "Appliance Type",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        "LIGHT",
+        "AC",
+        "TV"
+      ]
+    }
+  ]
+}
