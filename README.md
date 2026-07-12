@@ -1,5 +1,7 @@
 # Homebridge Nature Remo Multi Platform
 
+[日本語](README.ja.md) | English
+
 An independent Homebridge dynamic-platform plugin for Nature Remo. It supports multiple Remo
 devices registered to one Nature account and exposes their sensors and appliances separately.
 

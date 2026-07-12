@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge Nature Remo Multi Platform",
   "name": "homebridge-nature-remo-multi-platform",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Independent Homebridge plugin for multiple Nature Remo devices, lights, air conditioners, TVs and sensors.",
   "license": "Apache-2.0",
   "repository": {
@@ -23,6 +23,7 @@
     "homebridge-ui",
     "config.schema.json",
     "README.md",
+    "README.ja.md",
     "LICENSE"
   ],
   "scripts": {
