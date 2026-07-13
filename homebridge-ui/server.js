@@ -1,7 +1,5 @@
 (async () => {
   const https = require('node:https');
-  const fs = require('node:fs');
-  const path = require('node:path');
   const { HomebridgePluginUiServer } = await import('@homebridge/plugin-ui-utils');
 
   const requestJson = (path, token) => new Promise((resolve, reject) => {
@@ -37,23 +35,12 @@
       this.ready();
     }
 
-    get discoveryResultPath() {
-      return path.join(__dirname, 'public', 'discovery-result.json');
-    }
-
-    writeDiscoveryResult(result) {
-      const temporaryPath = `${this.discoveryResultPath}.tmp`;
-      fs.writeFileSync(temporaryPath, JSON.stringify(result));
-      fs.renameSync(temporaryPath, this.discoveryResultPath);
-    }
-
     async startDiscovery({ accessToken }) {
       if (!accessToken || typeof accessToken !== 'string') {
         return { status: 'error', message: 'アクセストークンを入力してください。' };
       }
       if (this.discovery.status === 'running') return this.discovery;
       this.discovery = { status: 'running', startedAt: Date.now() };
-      this.writeDiscoveryResult(this.discovery);
       console.log('Nature Remo UI discovery started.');
       setTimeout(() => void this.performDiscovery(accessToken.trim()), 250);
       return this.discovery;
@@ -83,7 +70,6 @@
           })),
           completedAt: Date.now(),
         };
-        this.writeDiscoveryResult(this.discovery);
         console.log(`Nature Remo UI discovery completed: ${this.discovery.devices.length} devices.`);
       } catch (error) {
         this.discovery = {
@@ -91,7 +77,6 @@
           message: error instanceof Error ? error.message : String(error),
           completedAt: Date.now(),
         };
-        this.writeDiscoveryResult(this.discovery);
         console.error(`Nature Remo UI discovery failed: ${this.discovery.message}`);
       }
     }

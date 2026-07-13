@@ -12,7 +12,7 @@ This is an unofficial community plugin and is not affiliated with Nature Inc.
 - Automatic discovery of every Nature Remo on the account
 - Optional filtering by Nature Remo device ID
 - Alexa-style include/exclude selection for individual appliances
-- Temperature, humidity and illuminance sensors
+- Temperature, humidity, illuminance and motion sensors
 - Light on/off control
 - Air-conditioner power, heating/cooling mode and target-temperature control
 - TV power, mute, volume and remote-key control
@@ -21,8 +21,8 @@ This is an unofficial community plugin and is not affiliated with Nature Inc.
 
 ## Requirements
 
-- Homebridge 1.3.5 or later
-- Node.js 14.18.1 or later
+- Homebridge 1.8 or later, or Homebridge 2.x
+- Node.js 22.12 or later, or Node.js 24.x
 - A Nature Cloud API access token from <https://home.nature.global/>
 
 ## Installation
@@ -54,10 +54,9 @@ Add one platform entry in the Homebridge configuration:
 }
 ```
 
-All Nature Remo devices are enabled when `deviceIds` is omitted. To expose only selected units:
-
-An empty `deviceIds` array is also treated as all devices. This prevents a newly saved UI
-configuration from accidentally disabling every accessory before the first discovery.
+All Nature Remo devices are enabled until a device selection is configured. After configuration,
+an empty `deviceIds` array disables all Remo devices and their associated sensors and appliances.
+To expose only selected units:
 
 ```json
 {

@@ -1,4 +1,4 @@
-import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
+import { APIEvent, CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 import { NatureRemoPlatform } from './platform';
 import { Device } from './types';
 
@@ -18,6 +18,7 @@ export class NatureNemoSensorAccessory {
   private readonly name: string;
   private readonly id: string;
   private readonly motionHoldMs: number;
+  private readonly updateTimer: NodeJS.Timeout;
   private lastTemperature?: number;
   private lastHumidity?: number;
   private lastLight?: number;
@@ -72,7 +73,8 @@ export class NatureNemoSensorAccessory {
     }
 
     const interval = Math.max(15, Number(this.platform.config.sensorPollingSeconds) || 30) * 1000;
-    setInterval(() => void this.update(), interval);
+    this.updateTimer = setInterval(() => void this.update(), interval);
+    this.platform.api.on(APIEvent.SHUTDOWN, () => clearInterval(this.updateTimer));
     this.platform.logger.debug('[%s] sensor id -> %s, polling=%ss', this.name, this.id, interval / 1000);
   }
 
