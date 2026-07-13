@@ -51,14 +51,14 @@ export class NatureNemoAirConAccessory {
     this.platform.logger.debug('getCurrentHeatingCoolingState called');
     const airConState = await this.platform.natureRemoApi.getAirConState(this.id);
     this.platform.logger.info('[%s] Current Heater Cooler State -> %s, %s', this.name, airConState.button || 'power-on', airConState.mode);
-    return this.convertHeatingCoolingState(airConState.button, airConState.mode);
+    return this.convertCurrentHeatingCoolingState(airConState.button, airConState.mode);
   }
 
   async getTargetHeatingCoolingState(): Promise<CharacteristicValue> {
     this.platform.logger.debug('getTargetHeatingCoolingState called');
     const airConState = await this.platform.natureRemoApi.getAirConState(this.id);
     this.platform.logger.info('[%s] Target Heater Cooler State -> %s, %s', this.name, airConState.button || 'power-on', airConState.mode);
-    const state = this.convertHeatingCoolingState(airConState.button, airConState.mode);
+    const state = this.convertTargetHeatingCoolingState(airConState.button, airConState.mode);
     this.state.targetHeatingCoolingState = state;
     return state;
   }
@@ -120,13 +120,13 @@ export class NatureNemoAirConAccessory {
       this.platform.logger.debug('[%s] Same state. skip sending', this.name);
       return;
     }
-    this.state.targetTemperature = value;
     const targetTemp = `${Math.round(value)}`;
     await this.platform.natureRemoApi.setAirconTemperature(this.id, targetTemp);
+    this.state.targetTemperature = value;
     this.platform.logger.info('[%s] Target Temperature <- %s', this.name, targetTemp);
   }
 
-  private convertHeatingCoolingState(button: string, mode: string): number {
+  private convertCurrentHeatingCoolingState(button: string, mode: string): number {
     if (button === 'power-off') {
       return this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     } else {
@@ -134,17 +134,31 @@ export class NatureNemoAirConAccessory {
         return this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
       } else if (mode === 'cool') {
         return this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-      } else {
-        throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.INVALID_VALUE_IN_REQUEST);
       }
+      return this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     }
   }
 
-  private convertOperationMode(state: number): 'warm' | 'cool' {
+  private convertTargetHeatingCoolingState(button: string, mode: string): number {
+    if (button === 'power-off') {
+      return this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+    }
+    if (mode === 'warm') {
+      return this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
+    }
+    if (mode === 'cool') {
+      return this.platform.Characteristic.TargetHeatingCoolingState.COOL;
+    }
+    return this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
+  }
+
+  private convertOperationMode(state: number): 'warm' | 'cool' | 'auto' {
     if (state === this.platform.Characteristic.TargetHeatingCoolingState.HEAT) {
       return 'warm';
     } else if (state === this.platform.Characteristic.TargetHeatingCoolingState.COOL) {
       return 'cool';
+    } else if (state === this.platform.Characteristic.TargetHeatingCoolingState.AUTO) {
+      return 'auto';
     } else {
       throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.INVALID_VALUE_IN_REQUEST);
     }

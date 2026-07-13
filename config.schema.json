@@ -31,7 +31,7 @@
       },
       "deviceIds": {
         "title": "Nature Remo devices",
-        "description": "Optional device IDs to expose. Leave empty to use every Nature Remo on the account.",
+        "description": "Device IDs to expose. Before selection is configured all devices are used; after configuration an empty list disables all devices.",
         "type": "array",
         "items": {
           "title": "Device ID",

@@ -15,6 +15,7 @@ import { NatureNemoLightAccessory } from './lightAccessory';
 import { NatureNemoAirConAccessory } from './airConAccessory';
 import { NatureNemoTvAccessory } from './tvAccessory';
 import { NatureNemoSensorAccessory } from './sensorAccessory';
+import { Device } from './types';
 
 export class NatureRemoPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
@@ -34,8 +35,12 @@ export class NatureRemoPlatform implements DynamicPlatformPlugin {
     this.api.on(APIEvent.DID_FINISH_LAUNCHING, async () => {
       logger.debug('Executed didFinishLaunching callback');
       logger.info('Starting discover accessories');
-      await this.discoverDevices();
-      logger.info('Completed discover accessories');
+      try {
+        await this.discoverDevices();
+        logger.info('Completed discover accessories');
+      } catch (error) {
+        logger.error('Accessory discovery failed: %s', error instanceof Error ? error.message : String(error));
+      }
     });
   }
 
@@ -54,8 +59,14 @@ export class NatureRemoPlatform implements DynamicPlatformPlugin {
       : allDevices;
     const discoveredIds = new Set<string>();
     for (const device of devices) {
-      discoveredIds.add(device.id);
       const existingAccessory = this.accessories.find(accessory => accessory.UUID === device.id);
+      if (!this.hasEnabledSensors(device)) {
+        if (existingAccessory) {
+          this.logger.info('Sensor accessory has no enabled services and will be removed:', existingAccessory.displayName);
+        }
+        continue;
+      }
+      discoveredIds.add(device.id);
       if (existingAccessory) {
         this.logger.info('Restoring existing accessory from cache:', existingAccessory.displayName);
         existingAccessory.context.device = device;
@@ -125,5 +136,18 @@ export class NatureRemoPlatform implements DynamicPlatformPlugin {
       this.logger.info('Removing %d stale or excluded accessories from cache', staleAccessories.length);
       this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, staleAccessories);
     }
+  }
+
+  private hasEnabledSensors(device: Device): boolean {
+    const settings = Array.isArray(this.config.sensorSettings)
+      ? (this.config.sensorSettings as Array<Record<string, unknown>>).find(item => item.deviceId === device.id)
+      : undefined;
+    const mappings = [
+      ['te', 'temperature'],
+      ['hu', 'humidity'],
+      ['il', 'illuminance'],
+      ['mo', 'motion'],
+    ];
+    return mappings.some(([event, setting]) => event in device.newest_events && settings?.[setting] !== false);
   }
 }
