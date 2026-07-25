@@ -1,5 +1,5 @@
 import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
-import { NatureRemoPlatform } from './platform';
+import { NatureRemoPlatform } from './platform.js';
 
 export class NatureNemoAirConAccessory {
   private readonly service: Service;
@@ -7,15 +7,19 @@ export class NatureNemoAirConAccessory {
   private readonly id: string;
   private readonly deviceId: string;
 
-  private state = {
-    targetHeatingCoolingState: this.platform.Characteristic.TargetHeatingCoolingState.OFF,
-    targetTemperature: 24,
+  private readonly state: {
+    targetHeatingCoolingState: number;
+    targetTemperature: number;
   };
 
   constructor(
     private readonly platform: NatureRemoPlatform,
     private readonly accessory: PlatformAccessory,
   ) {
+    this.state = {
+      targetHeatingCoolingState: this.platform.Characteristic.TargetHeatingCoolingState.OFF,
+      targetTemperature: 24,
+    };
     this.name = this.accessory.context.appliance.nickname;
     this.id = this.accessory.context.appliance.id;
     this.deviceId = this.accessory.context.appliance.device.id;
@@ -89,7 +93,10 @@ export class NatureNemoAirConAccessory {
 
   async getCurrentTemperature(): Promise<CharacteristicValue> {
     const device = await this.platform.natureRemoApi.getDevice(this.deviceId);
-    if (device.newest_events.te) {
+    if (device.newest_events.te
+      && Number.isFinite(device.newest_events.te.val)
+      && device.newest_events.te.val >= -100
+      && device.newest_events.te.val <= 100) {
       this.platform.logger.info('[%s] Current Temperature -> %s', this.name, device.newest_events.te.val);
       return device.newest_events.te.val;
     } else {

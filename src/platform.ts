@@ -9,17 +9,17 @@ import {
   Service,
 } from 'homebridge';
 
-import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { NatureRemoApi } from './natureRemoApi';
-import { NatureNemoLightAccessory } from './lightAccessory';
-import { NatureNemoAirConAccessory } from './airConAccessory';
-import { NatureNemoTvAccessory } from './tvAccessory';
-import { NatureNemoSensorAccessory } from './sensorAccessory';
-import { Device } from './types';
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
+import { NatureRemoApi } from './natureRemoApi.js';
+import { NatureNemoLightAccessory } from './lightAccessory.js';
+import { NatureNemoAirConAccessory } from './airConAccessory.js';
+import { NatureNemoTvAccessory } from './tvAccessory.js';
+import { NatureNemoSensorAccessory } from './sensorAccessory.js';
+import { Device } from './types.js';
 
 export class NatureRemoPlatform implements DynamicPlatformPlugin {
-  public readonly Service: typeof Service = this.api.hap.Service;
-  public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
+  public readonly Service: typeof Service;
+  public readonly Characteristic: typeof Characteristic;
   public readonly accessories: PlatformAccessory[] = [];
   public readonly natureRemoApi: NatureRemoApi;
 
@@ -28,6 +28,8 @@ export class NatureRemoPlatform implements DynamicPlatformPlugin {
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
+    this.Service = this.api.hap.Service;
+    this.Characteristic = this.api.hap.Characteristic;
     this.logger.debug('Nature Remo access token is %s', this.config.accessToken ? 'configured' : 'missing');
     this.natureRemoApi = new NatureRemoApi(this.logger, this.api, this.config.accessToken as string);
     this.logger.debug('Finished initializing platform:', this.config.name);

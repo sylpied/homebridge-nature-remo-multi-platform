@@ -1,8 +1,8 @@
 import { API } from 'homebridge';
 
-import { PLATFORM_NAME } from './settings';
-import { NatureRemoPlatform } from './platform';
+import { PLATFORM_NAME } from './settings.js';
+import { NatureRemoPlatform } from './platform.js';
 
-export = (api: API) => {
+export default (api: API): void => {
   api.registerPlatform(PLATFORM_NAME, NatureRemoPlatform);
 };

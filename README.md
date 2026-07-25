@@ -21,8 +21,8 @@ This is an unofficial community plugin and is not affiliated with Nature Inc.
 
 ## Requirements
 
-- Homebridge 1.8 or later, or Homebridge 2.x
-- Node.js 22.12 or later, or Node.js 24.x
+- Homebridge 2.x
+- Node.js 22.13 or later, or Node.js 24.x
 - A Nature Cloud API access token from <https://home.nature.global/>
 
 ## Installation
@@ -32,6 +32,9 @@ npm install -g homebridge-nature-remo-multi-platform
 ```
 
 Restart Homebridge after installation.
+
+Version 2.0 uses Homebridge 2.x native ESM loading. Homebridge 1.x users should remain on
+the 1.4 release line.
 
 ## Configuration
 

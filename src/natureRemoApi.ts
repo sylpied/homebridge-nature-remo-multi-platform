@@ -2,8 +2,8 @@ import { URLSearchParams } from 'url';
 import { Mutex } from 'async-mutex';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { API, HapStatusError, Logger } from 'homebridge';
-import { ACButton, AirConParams, Appliance, Device, LIGHTState, OperationMode } from './types';
-import { API_URL, CACHE_THRESHOLD } from './settings';
+import { ACButton, AirConParams, Appliance, Device, LIGHTState, OperationMode } from './types.js';
+import { API_URL, CACHE_THRESHOLD } from './settings.js';
 
 interface Cache {
   updated: number;
@@ -34,6 +34,8 @@ export class NatureRemoApi {
     this.client = axios.create({
       baseURL: API_URL,
       timeout: 15000,
+      maxContentLength: 2 * 1024 * 1024,
+      maxBodyLength: 64 * 1024,
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -46,7 +48,7 @@ export class NatureRemoApi {
       if (this.applianceCache.appliances && (Date.now() - this.applianceCache.updated) < CACHE_THRESHOLD) {
         return this.applianceCache.appliances;
       }
-      const appliances = (await this.getMessage('/appliances')) as Appliance[];
+      const appliances = await this.getMessage<Appliance>('/appliances');
       this.applianceCache = { updated: Date.now(), appliances: appliances };
       return appliances;
     });
@@ -57,7 +59,7 @@ export class NatureRemoApi {
       if (this.deviceCache.devices && (Date.now() - this.deviceCache.updated) < CACHE_THRESHOLD) {
         return this.deviceCache.devices;
       }
-      const devices = (await this.getMessage('/devices')) as Device[];
+      const devices = await this.getMessage<Device>('/devices');
       this.deviceCache = { updated: Date.now(), devices: devices };
       return devices;
     });
@@ -120,11 +122,18 @@ export class NatureRemoApi {
     this.invalidateAppliances();
   }
 
-  private async getMessage(url: string): Promise<Appliance[] | Device[]> {
+  private async getMessage<T>(url: string): Promise<T[]> {
     try {
       const res = await this.client.get(url);
+      if (!Array.isArray(res.data)) {
+        this.logger.error('Nature Remo API returned an unexpected response for %s', url);
+        throw new this.api.hap.HapStatusError(this.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
+      }
       return res.data;
     } catch (err) {
+      if (err instanceof this.api.hap.HapStatusError) {
+        throw err;
+      }
       throw this.convertToHapStatusError(err as AxiosError);
     }
   }

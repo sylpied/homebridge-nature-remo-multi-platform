@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.12.x, 24.x]
+        node-version: [22.13.x, 24.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -28,3 +28,6 @@ jobs:
         run: npm run build
         env:
           CI: true
+
+      - name: Test the project
+        run: npm test

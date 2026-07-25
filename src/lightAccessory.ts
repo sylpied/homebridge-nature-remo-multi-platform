@@ -1,5 +1,5 @@
 import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
-import { NatureRemoPlatform } from './platform';
+import { NatureRemoPlatform } from './platform.js';
 
 export class NatureNemoLightAccessory {
   private readonly service: Service;

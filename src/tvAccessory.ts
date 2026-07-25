@@ -1,5 +1,5 @@
 import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
-import { NatureRemoPlatform } from './platform';
+import { NatureRemoPlatform } from './platform.js';
 
 export class NatureNemoTvAccessory {
   private readonly service: Service;
@@ -7,16 +7,21 @@ export class NatureNemoTvAccessory {
   private readonly name: string;
   private readonly id: string;
 
-  private state = {
-    active: this.platform.Characteristic.Active.INACTIVE,
-    activeIdentifier: 1,
-    mute: false,
+  private readonly state: {
+    active: number;
+    activeIdentifier: number;
+    mute: boolean;
   };
 
   constructor(
     private readonly platform: NatureRemoPlatform,
     private readonly accessory: PlatformAccessory,
   ) {
+    this.state = {
+      active: this.platform.Characteristic.Active.INACTIVE,
+      activeIdentifier: 1,
+      mute: false,
+    };
     this.name = this.accessory.context.appliance.nickname;
     this.id = this.accessory.context.appliance.id;
 

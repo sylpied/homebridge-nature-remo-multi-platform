@@ -1,8 +1,9 @@
-(async () => {
-  const https = require('node:https');
-  const { HomebridgePluginUiServer } = await import('@homebridge/plugin-ui-utils');
+import https from 'node:https';
+import { HomebridgePluginUiServer } from '@homebridge/plugin-ui-utils';
 
-  const requestJson = (path, token) => new Promise((resolve, reject) => {
+const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+
+const requestJson = (path, token) => new Promise((resolve, reject) => {
     const request = https.request({
       hostname: 'api.nature.global',
       path: `/1${path}`,
@@ -12,7 +13,12 @@
     }, (response) => {
       let body = '';
       response.setEncoding('utf8');
-      response.on('data', (chunk) => { body += chunk; });
+      response.on('data', (chunk) => {
+        body += chunk;
+        if (body.length > MAX_RESPONSE_BYTES) {
+          request.destroy(new Error('Nature APIの応答が大きすぎます。'));
+        }
+      });
       response.on('end', () => {
         if (response.statusCode < 200 || response.statusCode >= 300) {
           reject(new Error(response.statusCode === 401 ? 'アクセストークンが無効です。' : `Nature API エラー (${response.statusCode})`));
@@ -24,9 +30,9 @@
     request.on('timeout', () => request.destroy(new Error('Nature APIへの接続がタイムアウトしました。')));
     request.on('error', reject);
     request.end();
-  });
+});
 
-  class NatureRemoMultiUiServer extends HomebridgePluginUiServer {
+class NatureRemoMultiUiServer extends HomebridgePluginUiServer {
     constructor() {
       super();
       this.discovery = { status: 'idle' };
@@ -80,10 +86,6 @@
         console.error(`Nature Remo UI discovery failed: ${this.discovery.message}`);
       }
     }
-  }
+}
 
-  new NatureRemoMultiUiServer();
-})().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+new NatureRemoMultiUiServer();

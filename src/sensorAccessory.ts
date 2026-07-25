@@ -1,6 +1,6 @@
 import { APIEvent, CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
-import { NatureRemoPlatform } from './platform';
-import { Device } from './types';
+import { NatureRemoPlatform } from './platform.js';
+import { Device } from './types.js';
 
 interface SensorSelection {
   deviceId: string;
@@ -32,7 +32,7 @@ export class NatureNemoSensorAccessory {
       ? (this.platform.config.sensorSettings as SensorSelection[]).find(item => item.deviceId === this.id)
       : undefined;
     const enabled = (key: keyof Omit<SensorSelection, 'deviceId'>): boolean => settings?.[key] !== false;
-    this.motionHoldMs = Math.max(15, Number(this.platform.config.motionHoldSeconds) || 60) * 1000;
+    this.motionHoldMs = this.seconds(this.platform.config.motionHoldSeconds, 60, 15, 600) * 1000;
     this.accessory.category = this.platform.api.hap.Categories.SENSOR;
 
     const [model, version] = device.firmware_version.split('/');
@@ -72,7 +72,7 @@ export class NatureNemoSensorAccessory {
       this.removeService(this.platform.Service.MotionSensor);
     }
 
-    const interval = Math.max(15, Number(this.platform.config.sensorPollingSeconds) || 30) * 1000;
+    const interval = this.seconds(this.platform.config.sensorPollingSeconds, 30, 15, 300) * 1000;
     this.updateTimer = setInterval(() => void this.update(), interval);
     this.platform.api.on(APIEvent.SHUTDOWN, () => clearInterval(this.updateTimer));
     this.platform.logger.debug('[%s] sensor id -> %s, polling=%ss', this.name, this.id, interval / 1000);
@@ -93,13 +93,23 @@ export class NatureNemoSensorAccessory {
     return Number.isFinite(value) && value >= 0 && value <= 100;
   }
 
+  private validLight(value: number): boolean {
+    return Number.isFinite(value) && value >= 0;
+  }
+
+  private seconds(value: unknown, fallback: number, minimum: number, maximum: number): number {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? Math.min(maximum, Math.max(minimum, parsed)) : fallback;
+  }
+
   private light(value: number): number {
-    return Number.isFinite(value) ? Math.min(100000, Math.max(0.0001, value)) : 0.0001;
+    return Math.min(100000, Math.max(0.0001, value));
   }
 
   private motion(device: Device): boolean {
     const created = Date.parse(device.newest_events.mo?.created_at || '');
-    return Number.isFinite(created) && Date.now() - created <= this.motionHoldMs;
+    const age = Date.now() - created;
+    return Number.isFinite(created) && age >= -5000 && age <= this.motionHoldMs;
   }
 
   private async update(): Promise<void> {
@@ -115,7 +125,7 @@ export class NatureNemoSensorAccessory {
         this.lastHumidity = humidity;
         this.humidityService?.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, humidity);
       }
-      if (device.newest_events.il) {
+      if (device.newest_events.il && this.validLight(device.newest_events.il.val)) {
         const light = this.light(device.newest_events.il.val);
         if (light !== this.lastLight) {
           this.lastLight = light; this.lightService?.updateCharacteristic(this.platform.Characteristic.CurrentAmbientLightLevel, light);
@@ -150,7 +160,7 @@ export class NatureNemoSensorAccessory {
 
   async getLight(): Promise<CharacteristicValue> {
     const value = (await this.platform.natureRemoApi.getDevice(this.id)).newest_events.il?.val;
-    if (value === undefined) {
+    if (value === undefined || !this.validLight(value)) {
       throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
     }
     return this.light(value);

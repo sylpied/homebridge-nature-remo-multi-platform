@@ -24,8 +24,8 @@ Natureアカウントに登録されているRemo、センサー、照明、エ�
 
 ## 動作環境
 
-- Homebridge 1.8以降、またはHomebridge 2.x
-- Node.js 22.12以降、またはNode.js 24.x
+- Homebridge 2.x
+- Node.js 22.13以降、またはNode.js 24.x
 - Nature Cloud APIアクセストークン
 
 アクセストークンは[Nature Developer Page](https://home.nature.global/)で発行できます。
@@ -43,6 +43,8 @@ homebridge-nature-remo-multi-platform
 ```sh
 npm install -g homebridge-nature-remo-multi-platform
 ```
+
+バージョン2.0はHomebridge 2.xのESM読み込み方式を使用します。Homebridge 1.xでは1.4系を使用してください。
 
 ## 設定方法
 
