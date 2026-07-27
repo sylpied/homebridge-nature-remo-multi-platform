@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0-rc.2
+
+- Restore the last discovered Remo and appliance list when reopening the custom UI.
+- Show status text that distinguishes a missing token, a saved token awaiting discovery, and cached device information.
+- Store only minimal discovery metadata; serial numbers are not persisted.
+
 ## 2.0.0-rc.1
 
 - Migrate the plugin runtime to native ESM for Homebridge 2.x.

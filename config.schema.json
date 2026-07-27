@@ -43,6 +43,32 @@
         "type": "boolean",
         "default": false
       },
+      "discoveryCache": {
+        "title": "Saved device discovery information",
+        "description": "Minimal device metadata used to restore the custom UI after reopening it.",
+        "type": "array",
+        "default": [],
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "firmware": { "type": "string" },
+            "sensors": { "type": "array", "items": { "type": "string" } },
+            "appliances": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "type": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      },
       "sensorPollingSeconds": { "title": "Sensor polling interval (seconds)", "type": "integer", "default": 30, "minimum": 15, "maximum": 300 },
       "motionHoldSeconds": { "title": "Motion detection hold time (seconds)", "type": "integer", "default": 60, "minimum": 15, "maximum": 600 },
       "sensorSettings": {
