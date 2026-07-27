@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+
+- Promote the field-tested 2.0.0 release candidates without functional changes from RC2.
+- Use native ESM and Homebridge 2.x APIs with Node.js 22.13 or 24.
+- Support multiple Remo units, per-Remo sensors, and include/exclude appliance selection.
+- Restore saved Remo and appliance information when reopening the custom UI.
+- Harden Nature API response validation, timeouts, error mapping, and sensor value handling.
+- Update runtime and development dependencies; the release dependency audit is clean.
+
 ## 2.0.0-rc.2
 
 - Restore the last discovered Remo and appliance list when reopening the custom UI.
